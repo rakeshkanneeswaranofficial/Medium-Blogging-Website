@@ -13,13 +13,13 @@ export const signinInput = z.object({
 })
 
 
-const createBlogInput = z.object({
+export const createBlogInput = z.object({
     title: z.string(),
     content: z.string()
 })
 
 
-const updateBlogInput = z.object({
+export const updateBlogInput = z.object({
     title: z.string(),
     content: z.string(),
     id: z.number(),
