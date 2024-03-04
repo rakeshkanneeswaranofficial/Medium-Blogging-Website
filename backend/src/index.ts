@@ -1,42 +1,26 @@
 import { Hono } from 'hono'
+import { Prisma, PrismaClient } from '@prisma/client/edge'
+import { withAccelerate } from '@prisma/extension-accelerate'
+import { sign, verify } from 'hono/jwt'
+import { userRouter } from './route/user'
+import { blogRouter } from './route/blog'
 
-const app = new Hono()
+const app = new Hono<{
+  Bindings: {
+    DATABASE_URL: string
+    JWT_KEY: string
+  }
+}>();
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
+//all reqeuests comming to /api/v1/user will go to userRouter
+app.route("/api/v1/user",userRouter);
 
-app.post('/api/v1/user/signup', (c) => {
-  return c.text('Hello Hono!')
-})
-
-app.post('/api/v1/user/signin', (c) => {
-
-  return c.text('Hello Hono!')
-
-
-})
-
-app.post('/api/v1/blog', (c) => {
-
-  return c.text('Hello Hono!')
+// //all reqeuests comming to /api/v1/blog will go to blogRoute
+app.route("/api/v1/blog",blogRouter);
 
 
-})
-
-app.put('api/v1/blog',(c)=>{
-  return c.text('Hello Hono!')
-})
-
-app.get('/api/v1/blog/:id',(c)=>{
-  return c.text('Hello Hono!')
-})
 
 
-app.get('/api/v1/blog/bulk',(c)=>{
-   console.log("get request recived")
-  return c.text('Hello Hono!')
-})
 
 
 
