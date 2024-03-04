@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { Prisma, PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { sign, verify } from 'hono/jwt'
-import { signupInput } from "./zod";
+import { signupInput } from "../../../common/src/zod";
 
 export const userRouter = new Hono<{
     Bindings: {
@@ -15,7 +15,7 @@ userRouter.post('/signup', async (c) => {
 
     const body = await c.req.json();
 
-    
+
   
     //connecting to prisma acelerate
     const prisma = new PrismaClient({
