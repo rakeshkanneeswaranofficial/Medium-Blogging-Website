@@ -1,9 +1,8 @@
 import { Hono } from "hono";
 import { Prisma, PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from '@prisma/extension-accelerate'
-import { sign, verify } from 'hono/jwt'
-import { signupInput } from "../../../common/src/zod";
-
+import { sign} from 'hono/jwt'
+import { signupInput , signinInput } from "@rakeshkanneeswaran/mediumblog-common/dist/zod.js"
 export const userRouter = new Hono<{
     Bindings: {
       DATABASE_URL: string
@@ -15,14 +14,18 @@ userRouter.post('/signup', async (c) => {
 
     const body = await c.req.json();
 
+    const {success} = signupInput.safeParse(body);
+    if (!success) {
+      c.status(411);
+      return c.json({
+        error : "inputs not correct"
+      })
+    }
 
-  
     //connecting to prisma acelerate
     const prisma = new PrismaClient({
       datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate())
-  
-  
   
     //adding to database
     try {
@@ -34,19 +37,19 @@ userRouter.post('/signup', async (c) => {
         }
       })
   
-  
       //making payload for token generation
       const payload = {
         id: user.id
       }
   
-  
+
       //genrated token
       const token = await sign(payload, c.env.JWT_KEY);
       return c.json({
-        jwt: token
+        jwt: token,
+        remarks : "successfully signed up"
       })
-  
+
     } catch (error) {
       console.log(error);
       c.status(411)
@@ -65,6 +68,14 @@ userRouter.post('/signup', async (c) => {
   
   
     const body = await c.req.json();
+    const {success} = signinInput.safeParse(body);
+
+    if (!success) {
+      c.status(411);
+      return c.json({
+        error : "inputs not correct"
+      })
+    }
   
     try {
       const user = await prisma.user.findUnique({
