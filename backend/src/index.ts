@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { userRouter } from './route/user'
 import { blogRouter } from './route/blog'
+import { cors } from 'hono/cors'
 
 const app = new Hono<{
   Bindings: {
@@ -8,6 +9,9 @@ const app = new Hono<{
     JWT_KEY: string
   }
 }>();
+
+app.use('/*', cors())
+
 
 //all reqeuests comming to /api/v1/user will go to userRouter
 app.route("/api/v1/user",userRouter);

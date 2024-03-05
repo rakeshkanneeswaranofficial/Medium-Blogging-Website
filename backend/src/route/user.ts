@@ -95,8 +95,8 @@ userRouter.post('/signup', async (c) => {
       const payload = {
         id: user.id
       }
-      const token = await sign(payload, c.env.JWT_KEY);
-      return c.json({ token });
+      const jwt = await sign(payload, c.env.JWT_KEY);
+      return c.json({ jwt });
   
     } catch (error) {
   
